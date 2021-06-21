@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         // primaryColor: Colors.grey.shade300,
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.grey.shade300,
+        buttonColor: Colors.grey.shade300,
       ),
       home: TopPage(),
     );
@@ -32,8 +33,6 @@ class TopPage extends StatelessWidget {
     if (Platform.isIOS) {
       _requestIOSPermission();
       _initializePlatformSpecifics();
-      // _showNotification();
-      _scheduleNotification();
     }
     return ChangeNotifierProvider<MainModel>(
       create: (_) => MainModel(),
@@ -58,13 +57,15 @@ class TopPage extends StatelessWidget {
           automaticallyImplyLeading: false,
         ),
         body: Consumer<MainModel>(builder: (context, model, child) {
-          model.getCounter();
           model.getDate();
+          model.getCounter();
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('${model.todayText}'),
+                Text(
+                  '${model.startYear}年${model.startMonth}月${model.startDay}日',
+                ),
                 Text('${model.counter}'),
                 ElevatedButton(
                   onPressed: () async {
@@ -117,68 +118,5 @@ class TopPage extends StatelessWidget {
         onSelectNotification: (String payload) async {
       //onNotificationClick(payload); // your call back to the UI
     });
-  }
-
-  Future<void> _showNotification() async {
-    var androidChannelSpecifics = AndroidNotificationDetails(
-      'CHANNEL_ID',
-      'CHANNEL_NAME',
-      "CHANNEL_DESCRIPTION",
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: false,
-      timeoutAfter: 5000,
-      styleInformation: DefaultStyleInformation(true, true),
-    );
-
-    var iosChannelSpecifics = IOSNotificationDetails();
-
-    var platformChannelSpecifics = NotificationDetails(
-        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.show(
-      0, // Notification ID
-      'Test Title', // Notification Title
-      'Test Body', // Notification Body, set as null to remove the body
-      platformChannelSpecifics,
-      payload: 'New Payload', // Notification Payload
-    );
-  }
-
-  Future<void> _scheduleNotification() async {
-    var scheduleNotificationDateTime = DateTime.now().add(Duration(seconds: 5));
-    var androidChannelSpecifics = AndroidNotificationDetails(
-      'CHANNEL_ID 1',
-      'CHANNEL_NAME 1',
-      "CHANNEL_DESCRIPTION 1",
-      icon: 'app_icon',
-      //sound: RawResourceAndroidNotificationSound('my_sound'),
-      largeIcon: DrawableResourceAndroidBitmap('app_icon'),
-      enableLights: true,
-      color: const Color.fromARGB(255, 241, 209, 209),
-      ledColor: const Color.fromARGB(255, 255, 0, 0),
-      ledOnMs: 1000,
-      ledOffMs: 500,
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: false,
-      timeoutAfter: 5000,
-      styleInformation: DefaultStyleInformation(true, true),
-    );
-    var iosChannelSpecifics = IOSNotificationDetails(
-        //sound: 'my_sound.aiff',
-        );
-    var platformChannelSpecifics = NotificationDetails(
-      android: androidChannelSpecifics,
-      iOS: iosChannelSpecifics,
-    );
-    await flutterLocalNotificationsPlugin.schedule(
-      0,
-      'Test Title',
-      'Test Body',
-      scheduleNotificationDateTime,
-      platformChannelSpecifics,
-      payload: 'Test Payload',
-    );
   }
 }

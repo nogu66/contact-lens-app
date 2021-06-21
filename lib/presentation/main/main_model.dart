@@ -5,13 +5,36 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MainModel extends ChangeNotifier {
   int counter;
   DateTime today = DateTime.now();
-  DateTime goalDays;
-  String todayText;
+  String startYear;
+  String startMonth;
+  String startDay;
 
-  Future getCounter() async {
+  void getDate() async {
+    if (startYear == null && startMonth == null && startDay == null)
+      initializeDate();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.counter = prefs.getInt('counter') ?? 0;
+    today = DateTime.now();
+    this.startYear = prefs.getString('startYear') ?? startYear;
+    this.startMonth = prefs.getString('startMonth') ?? startMonth;
+    this.startDay = prefs.getString('startDay') ?? startDay;
     notifyListeners();
+  }
+
+  void initializeDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    today = DateTime.now();
+    DateFormat outputFormatYear = DateFormat('yyyy');
+    DateFormat outputFormatMonth = DateFormat('MM');
+    DateFormat outputFormatDay = DateFormat('dd');
+    startYear = outputFormatYear.format(today);
+    startMonth = outputFormatMonth.format(today);
+    startDay = outputFormatDay.format(today);
+    await prefs.setString('startYear', startYear);
+    await prefs.setString('startMonth', startMonth);
+    await prefs.setString('startDay', startDay);
+    this.startYear = prefs.getString('startYear') ?? startYear;
+    this.startMonth = prefs.getString('startMonth') ?? startMonth;
+    this.startDay = prefs.getString('startDay') ?? startDay;
   }
 
   void reload() async {
@@ -33,12 +56,10 @@ class MainModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getDate() async {
+  void getCounter() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormat = DateFormat('yyyy年MM月dd日');
-    today = DateTime.now();
-    todayText = outputFormat.format(today);
-    this.todayText = prefs.getString('todayText') ?? todayText;
+    this.counter = prefs.getInt('counter') ?? 0;
+    // this.goalDays = DateTime.now();
     notifyListeners();
   }
 }
