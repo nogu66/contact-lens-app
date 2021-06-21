@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_picker/Picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -189,6 +190,16 @@ class SettingsModel extends ChangeNotifier {
   void getPushTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     this.pushTimeText = prefs.getString('pushTimeText');
+  }
+
+  void setPushTime(Picker picker, List value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    DateFormat outputFormatHm = DateFormat('Hm');
+    pushTime = DateTime.utc(0, 0, 0, value[0], value[1], 0);
+    pushTimeText = outputFormatHm.format(pushTime);
+    await prefs.setString('pushTimeText', pushTimeText);
+    this.pushTimeText = prefs.getString('pushTimeText');
+    notifyListeners();
   }
 
   void chosenDateTime(DateTime value) async {

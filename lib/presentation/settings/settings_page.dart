@@ -2,6 +2,7 @@ import 'package:contact_lens_app/presentation/settings/settings_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_picker/Picker.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -21,16 +22,16 @@ class SettingsPage extends StatelessWidget {
         appBar: AppBar(
           title: Text('設定'),
           automaticallyImplyLeading: false,
-          // leading: Consumer<SettingsModel>(
-          //   builder: (context, model, child) {
-          //     return IconButton(
-          //       icon: Icon(Icons.arrow_back),
-          //       onPressed: () async {
-          //         Navigator.pop(context, true);
-          //       },
-          //     );
-          //   },
-          // ),
+          leading: Consumer<SettingsModel>(
+            builder: (context, model, child) {
+              return IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () async {
+                  Navigator.pop(context, true);
+                },
+              );
+            },
+          ),
         ),
         body: Consumer<SettingsModel>(
           builder: (context, model, child) {
@@ -284,14 +285,6 @@ class SettingsPage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text('通知機能'),
-                              // Switch(
-                              //   value: model.pushOn,
-                              //   activeColor: Colors.green,
-                              //   activeTrackColor: Colors.grey.shade300,
-                              //   inactiveThumbColor: Colors.white,
-                              //   inactiveTrackColor: Colors.grey,
-                              //   onChanged: model.changeSwitch,
-                              // ),
                               CupertinoSwitch(
                                 value: model.pushOn,
                                 onChanged: (value) {
@@ -301,8 +294,62 @@ class SettingsPage extends StatelessWidget {
                               ),
                             ],
                           ),
+                          // Padding(
+                          //   padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 0),
+                          //   child: Container(
+                          //     decoration: BoxDecoration(
+                          //       color: Colors.grey.shade300,
+                          //       borderRadius: BorderRadius.circular(5),
+                          //     ),
+                          //     child: Padding(
+                          //       padding: const EdgeInsets.all(8.0),
+                          //       child: InkWell(
+                          //         onTap: () {
+                          //           showCupertinoModalPopup(
+                          //               context: context,
+                          //               builder: (_) => Container(
+                          //                     height: 500,
+                          //                     color: Color.fromARGB(
+                          //                         255, 255, 255, 255),
+                          //                     child: Column(
+                          //                       children: [
+                          //                         Container(
+                          //                           height: 400,
+                          //                           child: CupertinoDatePicker(
+                          //                               initialDateTime:
+                          //                                   model.pushTime,
+                          //                               onDateTimeChanged:
+                          //                                   (DateTime value) {
+                          //                                 model.chosenDateTime(
+                          //                                     value);
+                          //                               }),
+                          //                         ),
+                          //
+                          //                         // Close the modal
+                          //                         CupertinoButton(
+                          //                           child: Text('OK'),
+                          //                           onPressed: () =>
+                          //                               Navigator.of(context)
+                          //                                   .pop(),
+                          //                         )
+                          //                       ],
+                          //                     ),
+                          //                   ));
+                          //         },
+                          //         child: Text(
+                          //           // '${model.pushHour} : ${model.pushMinutes}',
+                          //           '${model.pushTimeText}',
+                          //           textAlign: TextAlign.end,
+                          //           style: TextStyle(
+                          //             fontSize: 18,
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 0),
+                            padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey.shade300,
@@ -311,38 +358,6 @@ class SettingsPage extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: InkWell(
-                                  onTap: () {
-                                    showCupertinoModalPopup(
-                                        context: context,
-                                        builder: (_) => Container(
-                                              height: 500,
-                                              color: Color.fromARGB(
-                                                  255, 255, 255, 255),
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                    height: 400,
-                                                    child: CupertinoDatePicker(
-                                                        initialDateTime:
-                                                            model.pushTime,
-                                                        onDateTimeChanged:
-                                                            (DateTime value) {
-                                                          model.chosenDateTime(
-                                                              value);
-                                                        }),
-                                                  ),
-
-                                                  // Close the modal
-                                                  CupertinoButton(
-                                                    child: Text('OK'),
-                                                    onPressed: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                  )
-                                                ],
-                                              ),
-                                            ));
-                                  },
                                   child: Text(
                                     // '${model.pushHour} : ${model.pushMinutes}',
                                     '${model.pushTimeText}',
@@ -351,10 +366,22 @@ class SettingsPage extends StatelessWidget {
                                       fontSize: 18,
                                     ),
                                   ),
+                                  onTap: () async {
+                                    Picker(
+                                      adapter: DateTimePickerAdapter(
+                                          type: PickerDateTimeType.kHM,
+                                          value: model.pushTime,
+                                          customColumnType: [3, 4]),
+                                      title: Text('Select Time'),
+                                      onConfirm: (Picker picker, List value) {
+                                        model.setPushTime(picker, value);
+                                      },
+                                    ).showModal(context);
+                                  },
                                 ),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
