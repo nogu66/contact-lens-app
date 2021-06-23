@@ -14,10 +14,11 @@ class SettingsPage extends StatelessWidget {
     return ChangeNotifierProvider<SettingsModel>(
       create: (_) => SettingsModel()
         ..getCounter()
-        ..getStock()
-        ..getDate()
         ..getSlidingLimit()
-        ..getPushTime(),
+        ..getPushTime()
+        ..getStartDate()
+        ..getLensStock()
+        ..getWasherStock(),
       child: Scaffold(
         appBar: AppBar(
           title: Text('設定'),
@@ -64,9 +65,6 @@ class SettingsPage extends StatelessWidget {
                                   Column(
                                     children: [
                                       InkWell(
-                                        onTap: () {
-                                          model.selectDate(context);
-                                        },
                                         child: Container(
                                           padding: EdgeInsets.all(8),
                                           decoration: BoxDecoration(
@@ -77,21 +75,62 @@ class SettingsPage extends StatelessWidget {
                                                 BorderRadius.circular(5),
                                           ),
                                           child: Text(
-                                            '${model.startYear}年${model.startMonth}月${model.startDay}日',
+                                            '${model.startDateText}',
                                             style: TextStyle(fontSize: 15),
                                           ),
                                         ),
+                                        onTap: () async {
+                                          Picker(
+                                                  adapter:
+                                                      DateTimePickerAdapter(
+                                                    type:
+                                                        PickerDateTimeType.kYMD,
+                                                    value: model.startDate,
+                                                    // customColumnType: [3, 4],
+                                                    isNumberMonth: true,
+                                                    yearSuffix: "年",
+                                                    monthSuffix: "月",
+                                                    daySuffix: "日",
+                                                    // minValue: DateTime.now();
+                                                    minValue: DateTime.now()
+                                                        .add(new Duration(
+                                                            days: -365)),
+                                                    // minuteInterval: 30,
+                                                    minHour: 1,
+                                                    maxHour: 23,
+                                                  ),
+                                                  title: Text('Select Time'),
+                                                  onConfirm: (Picker picker,
+                                                      List value) {
+                                                    model.setStartDay(
+                                                        picker,
+                                                        (picker.adapter
+                                                                as DateTimePickerAdapter)
+                                                            .value);
+                                                    // print(
+                                                    //     '${value[0]} ${value[1]}');
+                                                    print((picker.adapter
+                                                            as DateTimePickerAdapter)
+                                                        .value);
+                                                  },
+                                                  onSelect: (Picker picker,
+                                                      int index,
+                                                      List<int> selected) {
+                                                    // print(picker.adapter);
+                                                  })
+                                              .showModal(context);
+                                        },
+                                      ),
+                                      ElevatedButton(
+                                        child: Text('期間の差'),
+                                        onPressed: () {
+                                          model.differenceDate();
+                                        },
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                              // ElevatedButton(
-                              //   child: Text('日付選択'),
-                              //   onPressed: () {
-                              //     model.selectDate(context);
-                              //   },
-                              // ),
                             ],
                           ),
                         ),
@@ -135,7 +174,7 @@ class SettingsPage extends StatelessWidget {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                        0, 16.0, 0, 16.0),
+                                        0, 16.0, 0, 0),
                                     child: ButtonBar(
                                       children: [
                                         InkWell(
@@ -159,9 +198,9 @@ class SettingsPage extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          width: 20,
+                                          width: 40,
                                           child: Text(
-                                            '${model.counter}',
+                                            '${model.counter}日',
                                             textAlign: TextAlign.center,
                                           ),
                                         ),
@@ -213,7 +252,7 @@ class SettingsPage extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('在庫数'),
+                              Text('残レンズ数'),
                               Column(
                                 children: [
                                   ButtonBar(
@@ -239,15 +278,93 @@ class SettingsPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 20,
+                                        width: 40,
                                         child: Text(
-                                          '${model.stock}',
+                                          '${model.lensStock}個',
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                       InkWell(
                                         onTap: () {
                                           model.incrementStock();
+                                        },
+                                        child: Container(
+                                          width: 40,
+                                          height: 30,
+                                          decoration: ShapeDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8.0)),
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: const Border(
+                        bottom: const BorderSide(
+                          color: Colors.grey,
+                          width: 0.5,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('洗浄液'),
+                              Column(
+                                children: [
+                                  ButtonBar(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          model.decrementWasher();
+                                        },
+                                        child: Container(
+                                          width: 40,
+                                          height: 30,
+                                          decoration: ShapeDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(8.0)),
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            Icons.remove,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 40,
+                                        child: Text(
+                                          '${model.washerStock}個',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          model.incrementWasher();
                                         },
                                         child: Container(
                                           width: 40,
@@ -289,65 +406,10 @@ class SettingsPage extends StatelessWidget {
                                 value: model.pushOn,
                                 onChanged: (value) {
                                   model.changeSwitch();
-                                  // model.changeSwitch();
                                 },
                               ),
                             ],
                           ),
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 0),
-                          //   child: Container(
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.grey.shade300,
-                          //       borderRadius: BorderRadius.circular(5),
-                          //     ),
-                          //     child: Padding(
-                          //       padding: const EdgeInsets.all(8.0),
-                          //       child: InkWell(
-                          //         onTap: () {
-                          //           showCupertinoModalPopup(
-                          //               context: context,
-                          //               builder: (_) => Container(
-                          //                     height: 500,
-                          //                     color: Color.fromARGB(
-                          //                         255, 255, 255, 255),
-                          //                     child: Column(
-                          //                       children: [
-                          //                         Container(
-                          //                           height: 400,
-                          //                           child: CupertinoDatePicker(
-                          //                               initialDateTime:
-                          //                                   model.pushTime,
-                          //                               onDateTimeChanged:
-                          //                                   (DateTime value) {
-                          //                                 model.chosenDateTime(
-                          //                                     value);
-                          //                               }),
-                          //                         ),
-                          //
-                          //                         // Close the modal
-                          //                         CupertinoButton(
-                          //                           child: Text('OK'),
-                          //                           onPressed: () =>
-                          //                               Navigator.of(context)
-                          //                                   .pop(),
-                          //                         )
-                          //                       ],
-                          //                     ),
-                          //                   ));
-                          //         },
-                          //         child: Text(
-                          //           // '${model.pushHour} : ${model.pushMinutes}',
-                          //           '${model.pushTimeText}',
-                          //           textAlign: TextAlign.end,
-                          //           style: TextStyle(
-                          //             fontSize: 18,
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
                             child: Container(

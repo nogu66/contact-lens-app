@@ -28,61 +28,86 @@ class MyApp extends StatelessWidget {
 class TopPage extends StatelessWidget {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-
   Widget build(BuildContext context) {
     if (Platform.isIOS) {
       _requestIOSPermission();
       _initializePlatformSpecifics();
     }
+
     return ChangeNotifierProvider<MainModel>(
-      create: (_) => MainModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('コンタクトレンズ管理'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsPage(),
-                    // fullscreenDialog: true,
+      create: (_) => MainModel()..initializeDate(),
+      // ..startLoading(),
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              title: Text('コンタクトレンズ管理'),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                        // fullscreenDialog: true,
+                      ),
+                    );
+                    // await Navigator.pop(context);
+                  },
+                )
+              ],
+              automaticallyImplyLeading: false,
+            ),
+            body: Consumer<MainModel>(
+              builder: (context, model, child) {
+                // model.getDate();
+                model.getStartDate();
+                model.getCounter();
+                model.getLensStock();
+                model.getWasherStock();
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // Text(
+                      //   '${model.startYear}年${model.startMonth}月${model.startDay}日',
+                      // ),
+                      // Text('${model.startDateText}'),
+                      // Text('${model.goalDateText}'),
+                      // Text('${model.counter}'),
+                      // Text('${model.lensStock}'),
+                      // Text('${model.washerStock}'),
+                      Text('開始日${model.startDateText}'),
+                      Text('終了日${model.goalDateText}'),
+                      Text('期間${model.counter}'),
+                      Text('レンズの残り${model.lensStock}'),
+                      Text('洗浄液の残り${model.washerStock}'),
+                      ElevatedButton(
+                        onPressed: () async {
+                          model.resetCounter();
+                        },
+                        child: Icon(Icons.refresh),
+                      ),
+                    ],
                   ),
                 );
-                // await Navigator.pop(context);
               },
-            )
-          ],
-          automaticallyImplyLeading: false,
-        ),
-        body: Consumer<MainModel>(builder: (context, model, child) {
-          model.getDate();
-          model.getCounter();
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  '${model.startYear}年${model.startMonth}月${model.startDay}日',
-                ),
-                Text('${model.counter}'),
-                ElevatedButton(
-                  onPressed: () async {
-                    model.resetCounter();
-                  },
-                  child: Icon(Icons.refresh),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    model.incrementCounter();
-                  },
-                  child: Icon(Icons.add),
-                ),
-              ],
             ),
-          );
-        }),
+          ),
+          Consumer<MainModel>(
+            builder: (context, model, chilsd) {
+              return model.isLoading
+                  ? Container(
+                      color: Colors.black.withOpacity(0.3),
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : SizedBox();
+            },
+          ),
+        ],
       ),
     );
   }

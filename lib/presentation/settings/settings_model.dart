@@ -12,17 +12,19 @@ class SettingsModel extends ChangeNotifier {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   int counter;
-  int stock;
+  int lensStock;
+  int washerStock;
+  int difference;
   DateTime today = DateTime.now();
-  DateTime goalDays;
-  String startYear;
-  String startMonth;
-  String startDay;
-  String goalDay;
-  int pushHour = 18;
-  int pushMinutes = 40;
+  // String startYear;
+  // String startMonth;
+  // String startDay;
+  DateTime startDate;
+  String startDateText;
+  DateTime goalDate;
+  String goalDateText;
   bool isPressed = false;
-  bool pushOn = true;
+  bool pushOn = false;
   final Map<int, Widget> logoWidgets = const <int, Widget>{
     0: Text("2Weeks"),
     1: Text("1Month"),
@@ -30,10 +32,40 @@ class SettingsModel extends ChangeNotifier {
   };
   int theirGroupValue = 0;
   DateTime pushTime;
-  String pushTimeText;
+  String pushTimeText = '18:00';
+  DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+
+  void differenceDate() async {
+    final difference = goalDate.difference(startDate).inDays;
+    print(difference);
+    print(startDate);
+    print(goalDate);
+  }
 
   void pressedButton() {
     isPressed = !isPressed;
+    notifyListeners();
+  }
+
+  void initialize() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+    this.startDate = today;
+    this.goalDate = startDate.add(new Duration(days: 13));
+    this.startDateText = outputFormatYMD.format(startDate);
+    this.goalDateText = outputFormatYMD.format(goalDate);
+    // difference = goalDate.difference(startDate).inDays + 1;
+    await prefs.setString('startDate', startDateText);
+    await prefs.setString('goalDate', goalDateText);
+    // await prefs.setInt('counter', difference);
+  }
+
+  void getStartDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (startDate == null) {
+      initialize();
+    }
+    this.startDateText = prefs.getString('startDate');
     notifyListeners();
   }
 
@@ -44,60 +76,18 @@ class SettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future selectDate(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: today,
-      firstDate: new DateTime.now().add(new Duration(days: -365)),
-      lastDate: new DateTime.now().add(new Duration(days: 365)),
-    );
-
-    if (picked != null) {
-      today = picked;
-    }
-    formatDate(today);
-    await prefs.setString('startYear', startYear);
-    await prefs.setString('startMonth', startMonth);
-    await prefs.setString('startDay', startDay);
-    notifyListeners();
-  }
-
-  void getDate() async {
-    if (startYear == null && startMonth == null && startDay == null)
-      initializeDate();
+  void setStartDay(Picker picker, DateTime value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    today = DateTime.now();
-    this.startYear = prefs.getString('startYear') ?? startYear;
-    this.startMonth = prefs.getString('startMonth') ?? startMonth;
-    this.startDay = prefs.getString('startDay') ?? startDay;
-    notifyListeners();
-  }
-
-  void initializeDate() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    today = DateTime.now();
-    DateFormat outputFormatYear = DateFormat('yyyy');
-    DateFormat outputFormatMonth = DateFormat('MM');
-    DateFormat outputFormatDay = DateFormat('dd');
-    startYear = outputFormatYear.format(today);
-    startMonth = outputFormatMonth.format(today);
-    startDay = outputFormatDay.format(today);
-    await prefs.setString('startYear', startYear);
-    await prefs.setString('startMonth', startMonth);
-    await prefs.setString('startDay', startDay);
-    this.startYear = prefs.getString('startYear') ?? startYear;
-    this.startMonth = prefs.getString('startMonth') ?? startMonth;
-    this.startDay = prefs.getString('startDay') ?? startDay;
-  }
-
-  void formatDate(DateTime day) async {
-    DateFormat outputFormatYear = DateFormat('yyyy');
-    DateFormat outputFormatMonth = DateFormat('MM');
-    DateFormat outputFormatDay = DateFormat('dd');
-    startYear = outputFormatYear.format(day);
-    startMonth = outputFormatMonth.format(day);
-    startDay = outputFormatDay.format(day);
+    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+    startDate = value;
+    startDateText = outputFormatYMD.format(startDate);
+    this.goalDate = startDate.add(new Duration(days: counter));
+    startDateText = outputFormatYMD.format(startDate);
+    goalDateText = outputFormatYMD.format(goalDate);
+    await prefs.setString('startDate', startDateText);
+    await prefs.setString('goalDate', goalDateText);
+    this.startDateText = prefs.getString('startDate');
+    // this.goalDateText = prefs.getString('goalDate');
     notifyListeners();
   }
 
@@ -134,16 +124,35 @@ class SettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void getCounter() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (counter == 0) {
+      counter = 14;
+      print('なはなは');
+      await prefs.setInt('counter', counter);
+      this.counter = prefs.getInt('counter') ?? 14;
+    } else {
+      this.counter = prefs.getInt('counter') ?? 14;
+    }
+    notifyListeners();
+  }
+
   void incrementCounter() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     counter = (prefs.getInt('counter') ?? 0) + 1;
+    this.goalDate = startDate.add(new Duration(days: counter));
+    this.goalDateText = outputFormatYMD.format(goalDate);
     await prefs.setInt('counter', counter);
+    await prefs.setString('goalDate', goalDateText);
     notifyListeners();
   }
 
   void decrementCounter() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (counter > 0) counter = (prefs.getInt('counter') ?? 0) - 1;
+    if (counter > 1) counter = (prefs.getInt('counter') ?? 0) - 1;
+    this.goalDate = startDate.add(new Duration(days: counter));
+    this.goalDateText = outputFormatYMD.format(goalDate);
+    await prefs.setString('goalDate', goalDateText);
     await prefs.setInt('counter', counter);
     notifyListeners();
   }
@@ -160,36 +169,57 @@ class SettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getCounter() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.counter = prefs.getInt('counter') ?? 0;
-    this.goalDays = DateTime.now();
-    notifyListeners();
-  }
-
   void incrementStock() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    stock = (prefs.getInt('stock') ?? 0) + 1;
-    await prefs.setInt('stock', stock);
+    lensStock = (prefs.getInt('stock') ?? 0) + 1;
+    await prefs.setInt('stock', lensStock);
     notifyListeners();
   }
 
   void decrementStock() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (stock > 0) stock = (prefs.getInt('stock') ?? 0) - 1;
-    await prefs.setInt('stock', stock);
+    if (lensStock > 0) lensStock = (prefs.getInt('stock') ?? 0) - 1;
+    await prefs.setInt('stock', lensStock);
     notifyListeners();
   }
 
-  void getStock() async {
+  void getLensStock() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.stock = prefs.getInt('stock') ?? 0;
+    if (lensStock == null) {
+      lensStock = 10;
+    } else {
+      this.lensStock = prefs.getInt('stock') ?? 10;
+    }
+    notifyListeners();
+  }
+
+  void incrementWasher() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    washerStock = (prefs.getInt('washer') ?? 0) + 1;
+    await prefs.setInt('washer', washerStock);
+    notifyListeners();
+  }
+
+  void decrementWasher() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (washerStock > 0) washerStock = (prefs.getInt('washer') ?? 0) - 1;
+    await prefs.setInt('washer', washerStock);
+    notifyListeners();
+  }
+
+  void getWasherStock() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (lensStock == null) {
+      this.washerStock = 3;
+    } else {
+      this.washerStock = prefs.getInt('washer') ?? 3;
+    }
     notifyListeners();
   }
 
   void getPushTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.pushTimeText = prefs.getString('pushTimeText');
+    this.pushTimeText = prefs.getString('pushTimeText') ?? pushTimeText;
   }
 
   void setPushTime(Picker picker, List value) async {
@@ -197,16 +227,6 @@ class SettingsModel extends ChangeNotifier {
     DateFormat outputFormatHm = DateFormat('Hm');
     pushTime = DateTime.utc(0, 0, 0, value[0], value[1], 0);
     pushTimeText = outputFormatHm.format(pushTime);
-    await prefs.setString('pushTimeText', pushTimeText);
-    this.pushTimeText = prefs.getString('pushTimeText');
-    notifyListeners();
-  }
-
-  void chosenDateTime(DateTime value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormatHm = DateFormat('Hm');
-    pushTime = value;
-    pushTimeText = outputFormatHm.format(value);
     await prefs.setString('pushTimeText', pushTimeText);
     this.pushTimeText = prefs.getString('pushTimeText');
     notifyListeners();

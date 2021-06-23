@@ -22,10 +22,17 @@ dependencies:
   flutter_local_notifications: ^6.0.0
   flutter_native_timezone: ^2.0.0
   flutter_picker: ^2.0.1
+  flutter_native_splash: ^1.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+#  flutter_launcher_icons: ^0.9.0
+
 flutter:
   uses-material-design: true
+
+flutter_native_splash:
+  image: "assets/images/Icon-512.png"
+  color: "f0f8ff"
