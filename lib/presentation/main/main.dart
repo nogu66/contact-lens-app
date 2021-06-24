@@ -78,11 +78,12 @@ class TopPage extends StatelessWidget {
                       // Text('${model.counter}'),
                       // Text('${model.lensStock}'),
                       // Text('${model.washerStock}'),
-                      Text('開始日${model.startDateText}'),
-                      Text('終了日${model.goalDateText}'),
-                      Text('期間${model.counter}'),
-                      Text('レンズの残り${model.lensStock}'),
-                      Text('洗浄液の残り${model.washerStock}'),
+                      // Text('開始日${model.startDateText}'),
+                      // Text('終了日${model.goalDateText}'),
+                      Text('${model.startDateText}〜${model.goalDateText}'),
+                      Text('残り${model.counter}日'),
+                      Text('レンズ：残り${model.lensStock}個'),
+                      Text('洗浄液：残り${model.washerStock}個'),
                       ElevatedButton(
                         onPressed: () async {
                           model.resetCounter();

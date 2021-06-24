@@ -51,6 +51,14 @@ class MainModel extends ChangeNotifier {
     counter = goalDate.difference(startDate).inDays + 1;
     await prefs.setInt('counter', counter);
     this.counter = prefs.getInt('counter') ?? 13;
+
+    lensStock = 6;
+    await prefs.setInt('stock', lensStock);
+    this.lensStock = prefs.getInt('stock') ?? 6;
+
+    washerStock = 3;
+    await prefs.setInt('washer', washerStock);
+    this.counter = prefs.getInt('counter') ?? 3;
     notifyListeners();
   }
 
@@ -93,7 +101,7 @@ class MainModel extends ChangeNotifier {
   void getLensStock() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (lensStock == null) {
-      //TODO nullの場合、stockに10をストレージに追加
+      //TODO nullの場合、stockに10をストレージに追加2222
       lensStock = 10;
     } else {
       this.lensStock = prefs.getInt('stock') ?? 10;

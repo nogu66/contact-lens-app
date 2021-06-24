@@ -25,6 +25,7 @@ class SettingsModel extends ChangeNotifier {
   String goalDateText;
   bool isPressed = false;
   bool pushOn = false;
+  String number;
   final Map<int, Widget> logoWidgets = const <int, Widget>{
     0: Text("2Weeks"),
     1: Text("1Month"),
@@ -34,13 +35,6 @@ class SettingsModel extends ChangeNotifier {
   DateTime pushTime;
   String pushTimeText = '18:00';
   DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
-
-  void differenceDate() async {
-    final difference = goalDate.difference(startDate).inDays;
-    print(difference);
-    print(startDate);
-    print(goalDate);
-  }
 
   void pressedButton() {
     isPressed = !isPressed;
@@ -119,8 +113,12 @@ class SettingsModel extends ChangeNotifier {
 
   void setLimitCounter(counterValue) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
     counter = counterValue;
     await prefs.setInt('counter', counter);
+    this.goalDate = startDate.add(new Duration(days: (counter - 1)));
+    this.goalDateText = outputFormatYMD.format(goalDate);
+    await prefs.setString('goalDate', goalDateText);
     notifyListeners();
   }
 
@@ -134,6 +132,16 @@ class SettingsModel extends ChangeNotifier {
     } else {
       this.counter = prefs.getInt('counter') ?? 14;
     }
+    notifyListeners();
+  }
+
+  void pickCounter(List value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    counter = value[0];
+    this.goalDate = startDate.add(new Duration(days: counter));
+    this.goalDateText = outputFormatYMD.format(goalDate);
+    await prefs.setInt('counter', counter);
+    await prefs.setString('goalDate', goalDateText);
     notifyListeners();
   }
 
@@ -157,15 +165,17 @@ class SettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<int> getPrefCount() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   return (prefs.getInt('counter') ?? 0);
-  // }
-
   void resetCounter() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('counter', 14);
     this.counter = prefs.getInt('counter') ?? 0;
+    notifyListeners();
+  }
+
+  void pickStock(List value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.lensStock = value[0];
+    await prefs.setInt('stock', lensStock);
     notifyListeners();
   }
 
@@ -185,11 +195,14 @@ class SettingsModel extends ChangeNotifier {
 
   void getLensStock() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (lensStock == null) {
-      lensStock = 10;
-    } else {
-      this.lensStock = prefs.getInt('stock') ?? 10;
-    }
+    this.lensStock = prefs.getInt('stock') ?? 6;
+    notifyListeners();
+  }
+
+  void pickWasher(List value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.washerStock = value[0];
+    await prefs.setInt('washer', washerStock);
     notifyListeners();
   }
 
@@ -209,11 +222,7 @@ class SettingsModel extends ChangeNotifier {
 
   void getWasherStock() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (lensStock == null) {
-      this.washerStock = 3;
-    } else {
-      this.washerStock = prefs.getInt('washer') ?? 3;
-    }
+    this.washerStock = prefs.getInt('washer') ?? 3;
     notifyListeners();
   }
 

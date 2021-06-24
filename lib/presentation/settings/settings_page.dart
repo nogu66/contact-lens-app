@@ -1,13 +1,16 @@
 import 'package:contact_lens_app/presentation/settings/settings_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_picker/Picker.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  final TextEditingController textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -121,12 +124,6 @@ class SettingsPage extends StatelessWidget {
                                               .showModal(context);
                                         },
                                       ),
-                                      ElevatedButton(
-                                        child: Text('期間の差'),
-                                        onPressed: () {
-                                          model.differenceDate();
-                                        },
-                                      ),
                                     ],
                                   ),
                                 ],
@@ -198,10 +195,65 @@ class SettingsPage extends StatelessWidget {
                                           ),
                                         ),
                                         SizedBox(
-                                          width: 40,
-                                          child: Text(
-                                            '${model.counter}日',
-                                            textAlign: TextAlign.center,
+                                          width: 50,
+                                          child: InkWell(
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  decoration: ShapeDecoration(
+                                                    color: Colors.grey.shade300,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  5.0)),
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                            .fromLTRB(
+                                                        12.0, 8.0, 12.0, 8.0),
+                                                    child: Text(
+                                                      '${model.counter}',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            onTap: () {
+                                              Picker(
+                                                  adapter: NumberPickerAdapter(
+                                                      data: [
+                                                        NumberPickerColumn(
+                                                          begin: 0,
+                                                          end: 100,
+                                                        ),
+                                                      ]),
+                                                  delimiter: [
+                                                    PickerDelimiter(
+                                                        child: Container(
+                                                      width: 30,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text('日'),
+                                                    ))
+                                                  ],
+                                                  hideHeader: true,
+                                                  selectedTextStyle: TextStyle(
+                                                      color: Colors.blue),
+                                                  onConfirm: (Picker picker,
+                                                      List value) {
+                                                    // print(value);
+                                                    model.pickCounter(value);
+                                                  }).showDialog(context);
+                                            },
                                           ),
                                         ),
                                         InkWell(
@@ -262,7 +314,7 @@ class SettingsPage extends StatelessWidget {
                                           model.decrementStock();
                                         },
                                         child: Container(
-                                          width: 40,
+                                          width: 42,
                                           height: 30,
                                           decoration: ShapeDecoration(
                                             color: Colors.lightBlue,
@@ -278,10 +330,62 @@ class SettingsPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 40,
-                                        child: Text(
-                                          '${model.lensStock}個',
-                                          textAlign: TextAlign.center,
+                                        width: 50,
+                                        child: InkWell(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                decoration: ShapeDecoration(
+                                                  color: Colors.grey.shade300,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5.0)),
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          12.0, 8.0, 12.0, 8.0),
+                                                  child: Text(
+                                                    '${model.lensStock}',
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          onTap: () {
+                                            Picker(
+                                                adapter:
+                                                    NumberPickerAdapter(data: [
+                                                  NumberPickerColumn(
+                                                    begin: 0,
+                                                    end: 100,
+                                                  ),
+                                                ]),
+                                                delimiter: [
+                                                  PickerDelimiter(
+                                                      child: Container(
+                                                    width: 30,
+                                                    alignment: Alignment.center,
+                                                    child: Text('個'),
+                                                  ))
+                                                ],
+                                                hideHeader: true,
+                                                selectedTextStyle: TextStyle(
+                                                    color: Colors.blue),
+                                                onConfirm: (Picker picker,
+                                                    List value) {
+                                                  // print(value);
+                                                  model.pickStock(value);
+                                                }).showDialog(context);
+                                          },
                                         ),
                                       ),
                                       InkWell(
@@ -356,10 +460,62 @@ class SettingsPage extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 40,
-                                        child: Text(
-                                          '${model.washerStock}個',
-                                          textAlign: TextAlign.center,
+                                        width: 50,
+                                        child: InkWell(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                decoration: ShapeDecoration(
+                                                  color: Colors.grey.shade300,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5.0)),
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          12.0, 8.0, 12.0, 8.0),
+                                                  child: Text(
+                                                    '${model.washerStock}',
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          onTap: () {
+                                            Picker(
+                                                adapter:
+                                                    NumberPickerAdapter(data: [
+                                                  NumberPickerColumn(
+                                                    begin: 0,
+                                                    end: 100,
+                                                  ),
+                                                ]),
+                                                delimiter: [
+                                                  PickerDelimiter(
+                                                      child: Container(
+                                                    width: 30,
+                                                    alignment: Alignment.center,
+                                                    child: Text('個'),
+                                                  ))
+                                                ],
+                                                hideHeader: true,
+                                                selectedTextStyle: TextStyle(
+                                                    color: Colors.blue),
+                                                onConfirm: (Picker picker,
+                                                    List value) {
+                                                  // print(value);
+                                                  model.pickWasher(value);
+                                                }).showDialog(context);
+                                          },
                                         ),
                                       ),
                                       InkWell(
