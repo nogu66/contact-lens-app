@@ -66,6 +66,7 @@ class TopPage extends StatelessWidget {
                 model.getCounter();
                 model.getLensStock();
                 model.getWasherStock();
+                model.getNotifications();
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -97,7 +98,7 @@ class TopPage extends StatelessWidget {
             ),
           ),
           Consumer<MainModel>(
-            builder: (context, model, chilsd) {
+            builder: (context, model, child) {
               return model.isLoading
                   ? Container(
                       color: Colors.black.withOpacity(0.3),

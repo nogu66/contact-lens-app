@@ -1,10 +1,8 @@
 import 'package:contact_lens_app/presentation/settings/settings_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_picker/Picker.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -18,7 +16,7 @@ class SettingsPage extends StatelessWidget {
       create: (_) => SettingsModel()
         ..getCounter()
         ..getSlidingLimit()
-        ..getPushTime()
+        ..getNotifications()
         ..getStartDate()
         ..getLensStock()
         ..getWasherStock(),
@@ -151,134 +149,149 @@ class SettingsPage extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('使用期限'),
-                                  SizedBox(
-                                    width: 220,
-                                    child: CupertinoSlidingSegmentedControl(
-                                      children: model.logoWidgets,
-                                      groupValue: model.theirGroupValue,
-                                      onValueChanged: (changeFormGroupValue) {
-                                        model.slidingLimitControl(
-                                          changeFormGroupValue,
-                                        );
-                                      },
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0, 16.0, 0, 0),
-                                    child: ButtonBar(
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            model.decrementCounter();
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 220,
+                                        child: CupertinoSlidingSegmentedControl(
+                                          children: model.logoWidgets,
+                                          groupValue: model.theirGroupValue,
+                                          onValueChanged:
+                                              (changeFormGroupValue) {
+                                            model.slidingLimitControl(
+                                              changeFormGroupValue,
+                                            );
                                           },
-                                          child: Container(
-                                            width: 40,
-                                            height: 30,
-                                            decoration: ShapeDecoration(
-                                              color: Colors.lightBlue,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
-                                              ),
-                                            ),
-                                            child: Icon(
-                                              Icons.remove,
-                                              color: Colors.white,
-                                            ),
-                                          ),
                                         ),
-                                        SizedBox(
-                                          width: 50,
-                                          child: InkWell(
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  decoration: ShapeDecoration(
-                                                    color: Colors.grey.shade300,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5.0)),
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .fromLTRB(
-                                                        12.0, 8.0, 12.0, 8.0),
-                                                    child: Text(
-                                                      '${model.counter}',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 16.0, 0, 0),
+                                        child: ButtonBar(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                model.decrementCounter();
+                                              },
+                                              child: Container(
+                                                width: 40,
+                                                height: 30,
+                                                decoration: ShapeDecoration(
+                                                  color: Colors.lightBlue,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                8.0)),
                                                   ),
                                                 ),
-                                              ],
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
-                                            onTap: () {
-                                              Picker(
-                                                  adapter: NumberPickerAdapter(
-                                                      data: [
-                                                        NumberPickerColumn(
-                                                          begin: 0,
-                                                          end: 100,
+                                            SizedBox(
+                                              width: 50,
+                                              child: InkWell(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      decoration:
+                                                          ShapeDecoration(
+                                                        color: Colors
+                                                            .grey.shade300,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5.0)),
                                                         ),
-                                                      ]),
-                                                  delimiter: [
-                                                    PickerDelimiter(
-                                                        child: Container(
-                                                      width: 30,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text('日'),
-                                                    ))
+                                                      ),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .fromLTRB(
+                                                                12.0,
+                                                                8.0,
+                                                                12.0,
+                                                                8.0),
+                                                        child: Text(
+                                                          '${model.counter}',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
-                                                  hideHeader: true,
-                                                  selectedTextStyle: TextStyle(
-                                                      color: Colors.blue),
-                                                  onConfirm: (Picker picker,
-                                                      List value) {
-                                                    // print(value);
-                                                    model.pickCounter(value);
-                                                  }).showDialog(context);
-                                            },
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            model.incrementCounter();
-                                          },
-                                          child: Container(
-                                            width: 40,
-                                            height: 30,
-                                            decoration: ShapeDecoration(
-                                              color: Colors.lightBlue,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(8.0),
+                                                ),
+                                                onTap: () {
+                                                  Picker(
+                                                      adapter:
+                                                          NumberPickerAdapter(
+                                                              data: [
+                                                            NumberPickerColumn(
+                                                              begin: 1,
+                                                              end: 100,
+                                                            ),
+                                                          ]),
+                                                      delimiter: [
+                                                        PickerDelimiter(
+                                                            child: Container(
+                                                          width: 30,
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Text('日'),
+                                                        ))
+                                                      ],
+                                                      hideHeader: true,
+                                                      selectedTextStyle:
+                                                          TextStyle(
+                                                              color:
+                                                                  Colors.blue),
+                                                      onConfirm: (Picker picker,
+                                                          List value) {
+                                                        // print(value);
+                                                        model
+                                                            .pickCounter(value);
+                                                      }).showDialog(context);
+                                                },
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                model.incrementCounter();
+                                              },
+                                              child: Container(
+                                                width: 40,
+                                                height: 30,
+                                                decoration: ShapeDecoration(
+                                                  color: Colors.lightBlue,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(8.0),
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ),
-                                            child: Icon(
-                                              Icons.add,
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -558,46 +571,78 @@ class SettingsPage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Text('通知機能'),
-                              CupertinoSwitch(
-                                value: model.pushOn,
-                                onChanged: (value) {
-                                  model.changeSwitch();
-                                },
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 8.0, 0, 8.0),
+                                child: CupertinoSwitch(
+                                  value: model.pushOn,
+                                  onChanged: (value) {
+                                    model.changeSwitch();
+                                  },
+                                ),
                               ),
                             ],
                           ),
                           Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 16.0, 0, 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('通知日'),
+                                SizedBox(
+                                  width: 150,
+                                  child: CupertinoSlidingSegmentedControl(
+                                    children: model.pushDateSet,
+                                    groupValue: model.pushDateValue,
+                                    onValueChanged: (changeFormGroupValue) {
+                                      model.slidingPushDateControl(
+                                        changeFormGroupValue,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
                             padding: EdgeInsets.fromLTRB(0, 16, 0, 16),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell(
-                                  child: Text(
-                                    // '${model.pushHour} : ${model.pushMinutes}',
-                                    '${model.pushTimeText}',
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                      fontSize: 18,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('通知時間'),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: InkWell(
+                                      child: Text(
+                                        // '${model.pushHour} : ${model.pushMinutes}',
+                                        '${model.pushTimeText}',
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        Picker(
+                                          adapter: DateTimePickerAdapter(
+                                              type: PickerDateTimeType.kHM,
+                                              value: model.pushTime,
+                                              customColumnType: [3, 4]),
+                                          title: Text('Select Time'),
+                                          onConfirm:
+                                              (Picker picker, List value) {
+                                            model.setPushTime(picker, value);
+                                          },
+                                        ).showModal(context);
+                                      },
                                     ),
                                   ),
-                                  onTap: () async {
-                                    Picker(
-                                      adapter: DateTimePickerAdapter(
-                                          type: PickerDateTimeType.kHM,
-                                          value: model.pushTime,
-                                          customColumnType: [3, 4]),
-                                      title: Text('Select Time'),
-                                      onConfirm: (Picker picker, List value) {
-                                        model.setPushTime(picker, value);
-                                      },
-                                    ).showModal(context);
-                                  },
                                 ),
-                              ),
+                              ],
                             ),
                           ),
                         ],
