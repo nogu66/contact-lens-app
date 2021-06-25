@@ -108,11 +108,6 @@ class SettingsPage extends StatelessWidget {
                                                         (picker.adapter
                                                                 as DateTimePickerAdapter)
                                                             .value);
-                                                    // print(
-                                                    //     '${value[0]} ${value[1]}');
-                                                    print((picker.adapter
-                                                            as DateTimePickerAdapter)
-                                                        .value);
                                                   },
                                                   onSelect: (Picker picker,
                                                       int index,

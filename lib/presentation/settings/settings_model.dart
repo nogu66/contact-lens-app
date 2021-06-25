@@ -50,14 +50,6 @@ class SettingsModel extends ChangeNotifier {
   String notificationBody;
   DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
 
-  void printDiff() {
-    // diffDate =
-    final birthday = DateTime(2021, 6, 25, 18, 0, 0);
-    final date2 = DateTime.now();
-    final diffDate = birthday.difference(date2).inSeconds;
-    print(diffDate);
-  }
-
   void pressedButton() {
     isPressed = !isPressed;
     notifyListeners();
@@ -66,24 +58,21 @@ class SettingsModel extends ChangeNotifier {
   void initialize() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
-    // this.goalDate = startDate.add(new Duration(days: 13));
     this.startDateText = outputFormatYMD.format(startDate);
     this.goalDateText = outputFormatYMD.format(goalDate);
-    // difference = goalDate.difference(startDate).inDays + 1;
     await prefs.setString('startDate', startDateText);
     await prefs.setString('goalDate', goalDateText);
-    // await prefs.setInt('counter', difference);
   }
 
   void getStartDate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     startTimeStamp = prefs.getInt('startTimeStamp');
     goalTimeStamp = prefs.getInt('goalTimeStamp');
-    this.startDate = DateTime.fromMicrosecondsSinceEpoch(startTimeStamp);
-    this.goalDate = DateTime.fromMicrosecondsSinceEpoch(goalTimeStamp);
+    this.startDate = DateTime.fromMillisecondsSinceEpoch(startTimeStamp);
+    this.goalDate = DateTime.fromMillisecondsSinceEpoch(goalTimeStamp);
     if (goalDate == null) {
       initialize();
-      print('失敗');
     }
     this.startDateText = prefs.getString('startDate');
     this.goalDateText = prefs.getString('goalDate');
@@ -109,11 +98,14 @@ class SettingsModel extends ChangeNotifier {
   void setStartDay(Picker picker, DateTime value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
-    startDate = value;
-    startDateText = outputFormatYMD.format(startDate);
-    this.goalDate = startDate.add(new Duration(days: counter));
+    this.startDate = value;
+    this.goalDate = startDate.add(new Duration(days: (counter - 1)));
     startDateText = outputFormatYMD.format(startDate);
     goalDateText = outputFormatYMD.format(goalDate);
+    startTimeStamp = startDate.millisecondsSinceEpoch;
+    goalTimeStamp = goalDate.millisecondsSinceEpoch;
+    await prefs.setInt('startTimeStamp', startTimeStamp);
+    await prefs.setInt('goalTimeStamp', goalTimeStamp);
     await prefs.setString('startDate', startDateText);
     await prefs.setString('goalDate', goalDateText);
     this.startDateText = prefs.getString('startDate');
@@ -129,7 +121,6 @@ class SettingsModel extends ChangeNotifier {
   void slidingLimitControl(changeFormGroupValue) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     this.theirGroupValue = changeFormGroupValue;
-    // print(theirGroupValue);
     switch (theirGroupValue) {
       case 0:
         setLimitCounter(14);
@@ -154,6 +145,10 @@ class SettingsModel extends ChangeNotifier {
     await prefs.setInt('counter', counter);
     this.goalDate = startDate.add(new Duration(days: (counter - 1)));
     this.goalDateText = outputFormatYMD.format(goalDate);
+    startTimeStamp = startDate.millisecondsSinceEpoch;
+    goalTimeStamp = goalDate.millisecondsSinceEpoch;
+    await prefs.setInt('startTimeStamp', startTimeStamp);
+    await prefs.setInt('goalTimeStamp', goalTimeStamp);
     await prefs.setString('goalDate', goalDateText);
     if (pushOn) resetNotification(goalDate, pushHour, pushMin);
     notifyListeners();
@@ -176,6 +171,10 @@ class SettingsModel extends ChangeNotifier {
     counter = value[0] + 1;
     this.goalDate = startDate.add(new Duration(days: (counter - 1)));
     this.goalDateText = outputFormatYMD.format(goalDate);
+    startTimeStamp = startDate.millisecondsSinceEpoch;
+    goalTimeStamp = goalDate.millisecondsSinceEpoch;
+    await prefs.setInt('startTimeStamp', startTimeStamp);
+    await prefs.setInt('goalTimeStamp', goalTimeStamp);
     await prefs.setInt('counter', counter);
     await prefs.setString('goalDate', goalDateText);
     if (pushOn) resetNotification(goalDate, pushHour, pushMin);
@@ -186,6 +185,10 @@ class SettingsModel extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     counter = (prefs.getInt('counter') ?? 0) + 1;
     this.goalDate = startDate.add(new Duration(days: (counter - 1)));
+    startTimeStamp = startDate.millisecondsSinceEpoch;
+    goalTimeStamp = goalDate.millisecondsSinceEpoch;
+    await prefs.setInt('startTimeStamp', startTimeStamp);
+    await prefs.setInt('goalTimeStamp', goalTimeStamp);
     this.goalDateText = outputFormatYMD.format(goalDate);
     await prefs.setInt('counter', counter);
     await prefs.setString('goalDate', goalDateText);
@@ -197,6 +200,10 @@ class SettingsModel extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (counter > 1) counter = (prefs.getInt('counter') ?? 0) - 1;
     this.goalDate = startDate.add(new Duration(days: (counter - 1)));
+    startTimeStamp = startDate.millisecondsSinceEpoch;
+    goalTimeStamp = goalDate.millisecondsSinceEpoch;
+    await prefs.setInt('startTimeStamp', startTimeStamp);
+    await prefs.setInt('goalTimeStamp', goalTimeStamp);
     this.goalDateText = outputFormatYMD.format(goalDate);
     await prefs.setString('goalDate', goalDateText);
     await prefs.setInt('counter', counter);
@@ -283,8 +290,6 @@ class SettingsModel extends ChangeNotifier {
     this.pushTimeText = prefs.getString('pushTimeText');
     this.pushHour = value[0];
     this.pushMin = value[1];
-    print(pushHour);
-    print(pushMin);
     await prefs.setInt('pushTimeHour', pushHour);
     await prefs.setInt('pushTimeMin', pushMin);
     if (pushOn) resetNotification(goalDate, pushHour, pushMin);
@@ -294,7 +299,6 @@ class SettingsModel extends ChangeNotifier {
   void slidingPushDateControl(changeFormGroupValue) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     this.pushDateValue = changeFormGroupValue;
-    // print(theirGroupValue);
     switch (pushDateValue) {
       case 0:
         await prefs.setInt('pushDate', 0);
@@ -353,7 +357,6 @@ class SettingsModel extends ChangeNotifier {
   }
 
   tz.TZDateTime _nextInstanceOfGoalDate(DateTime pushDate) {
-    print('${pushDate.year}:${pushDate.month}:${pushDate.day}');
     // final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     // year, month, day, hour, minutes, second
     //TODO 指定した日時に設定する

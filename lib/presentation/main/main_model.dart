@@ -32,6 +32,9 @@ class MainModel extends ChangeNotifier {
   int pushMin;
   String notificationBody;
 
+  int startTimeStamp;
+  int goalTimeStamp;
+
   void startLoading() {
     this.isLoading = true;
     notifyListeners();
@@ -63,10 +66,10 @@ class MainModel extends ChangeNotifier {
     DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
     startDate = today;
     goalDate = startDate.add(Duration(days: 13));
-    int startTimeStamp = startDate.millisecondsSinceEpoch;
-    int goalTimeStamp = goalDate.millisecondsSinceEpoch;
+    startTimeStamp = startDate.millisecondsSinceEpoch;
+    goalTimeStamp = goalDate.millisecondsSinceEpoch;
     await prefs.setInt('startTimeStamp', startTimeStamp);
-    await prefs.setInt('startTimeStamp', goalTimeStamp);
+    await prefs.setInt('goalTimeStamp', goalTimeStamp);
 
     // print(goalDate);
     this.startDateText = outputFormatYMD.format(startDate);
@@ -108,9 +111,11 @@ class MainModel extends ChangeNotifier {
 
   void getCounter() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.counter = prefs.getInt('counter') ?? counter;
+    // this.counter = prefs.getInt('counter') ?? counter;
+    goalTimeStamp = prefs.getInt('goalTimeStamp');
+    this.goalDate = DateTime.fromMillisecondsSinceEpoch(goalTimeStamp);
+    this.counter = (goalDate.difference(today).inDays + 1);
     this.theirGroupValue = prefs.getInt('limit') ?? theirGroupValue;
-
     notifyListeners();
   }
 
@@ -140,9 +145,16 @@ class MainModel extends ChangeNotifier {
     DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
     this.counter = counterValue;
     await prefs.setInt('counter', counter);
+    this.startDate = today;
     this.goalDate = startDate.add(new Duration(days: (counter - 1)));
+    this.startDateText = outputFormatYMD.format(startDate);
     this.goalDateText = outputFormatYMD.format(goalDate);
+    await prefs.setString('startDate', startDateText);
     await prefs.setString('goalDate', goalDateText);
+    startTimeStamp = startDate.millisecondsSinceEpoch;
+    goalTimeStamp = goalDate.millisecondsSinceEpoch;
+    await prefs.setInt('startTimeStamp', startTimeStamp);
+    await prefs.setInt('goalTimeStamp', goalTimeStamp);
     if (pushOn) resetNotification(goalDate, pushHour, pushMin);
     notifyListeners();
   }

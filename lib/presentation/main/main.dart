@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:contact_lens_app/presentation/settings/settings_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
@@ -71,25 +72,36 @@ class TopPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      // Text(
-                      //   '${model.startYear}年${model.startMonth}月${model.startDay}日',
-                      // ),
-                      // Text('${model.startDateText}'),
-                      // Text('${model.goalDateText}'),
-                      // Text('${model.counter}'),
-                      // Text('${model.lensStock}'),
-                      // Text('${model.washerStock}'),
-                      // Text('開始日${model.startDateText}'),
-                      // Text('終了日${model.goalDateText}'),
                       Text('${model.startDateText}〜${model.goalDateText}'),
                       Text('残り${model.counter}日'),
                       Text('レンズ：残り${model.lensStock}個'),
                       Text('洗浄液：残り${model.washerStock}個'),
                       ElevatedButton(
                         onPressed: () async {
-                          model.resetCounter();
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  title: Text("レンズの交換確認"),
+                                  content: Text('レンズを交換しますか？'),
+                                  actions: <Widget>[
+                                    CupertinoDialogAction(
+                                      child: Text('キャンセル'),
+                                      isDefaultAction: true,
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                    CupertinoDialogAction(
+                                      child: Text('OK'),
+                                      onPressed: () async {
+                                        model.resetCounter();
+                                        await Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
                         },
-                        child: Icon(Icons.refresh),
+                        child: Text('レンズを交換する'),
                       ),
                     ],
                   ),
