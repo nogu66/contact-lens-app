@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:contact_lens_app/presentation/gage/circle_painter.dart';
 import 'package:contact_lens_app/presentation/settings/settings_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +29,8 @@ class MyApp extends StatelessWidget {
 class TopPage extends StatelessWidget {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  final size = 200.0;
+  final percentage = 0.7;
   Widget build(BuildContext context) {
     if (Platform.isIOS) {
       _requestIOSPermission();
@@ -70,38 +72,112 @@ class TopPage extends StatelessWidget {
                 model.getNotifications();
                 return Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Text('${model.startDateText}〜${model.goalDateText}'),
-                      Text('残り${model.counter}日'),
-                      Text('レンズ：残り${model.lensStock}個'),
-                      Text('洗浄液：残り${model.washerStock}個'),
-                      ElevatedButton(
-                        onPressed: () async {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CupertinoAlertDialog(
-                                  title: Text("レンズの交換確認"),
-                                  content: Text('レンズを交換しますか？'),
-                                  actions: <Widget>[
-                                    CupertinoDialogAction(
-                                      child: Text('キャンセル'),
-                                      isDefaultAction: true,
-                                      onPressed: () => Navigator.pop(context),
-                                    ),
-                                    CupertinoDialogAction(
-                                      child: Text('OK'),
-                                      onPressed: () async {
-                                        model.resetCounter();
-                                        await Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                        },
-                        child: Text('レンズを交換する'),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 60.0, 0, 40.0),
+                        child: Container(
+                          child: CustomPaint(
+                            // painter: CirclePaint(),
+                            painter: CircleLevelPainter(
+                              percentage: model.percentage,
+                              textCircleRadius: size * 0.5,
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(8.0),
+                              child: Material(
+                                borderRadius: BorderRadius.circular(size * 0.5),
+                                child: Container(
+                                  width: size,
+                                  height: size,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text('${model.startDateText}'),
+                                      Text('~'),
+                                      Text('${model.goalDateText}'),
+                                      Text('残り${model.counter}日'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Text('${model.startDateText}〜${model.goalDateText}'),
+                      // Text('残り${model.counter}日'),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            Text('レンズ：残り${model.lensStock}個'),
+                            ElevatedButton(
+                              onPressed: () async {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CupertinoAlertDialog(
+                                        title: Text("レンズの交換確認"),
+                                        content: Text('レンズを交換しますか？'),
+                                        actions: <Widget>[
+                                          CupertinoDialogAction(
+                                            child: Text('キャンセル'),
+                                            isDefaultAction: true,
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                          ),
+                                          CupertinoDialogAction(
+                                            child: Text('OK'),
+                                            onPressed: () async {
+                                              model.resetCounter();
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                              child: Text('レンズを交換する'),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      Column(
+                        children: [
+                          Text('洗浄液：残り${model.washerStock}個'),
+                          ElevatedButton(
+                            onPressed: () async {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return CupertinoAlertDialog(
+                                      title: Text("洗浄液交換通知"),
+                                      content: Text('洗浄液を交換しますか？'),
+                                      actions: <Widget>[
+                                        CupertinoDialogAction(
+                                          child: Text('キャンセル'),
+                                          isDefaultAction: true,
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                        ),
+                                        CupertinoDialogAction(
+                                          child: Text('OK'),
+                                          onPressed: () async {
+                                            model.decrementWasher();
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            },
+                            child: Text('レンズを交換する'),
+                          ),
+                        ],
                       ),
                     ],
                   ),

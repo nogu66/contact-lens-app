@@ -35,6 +35,9 @@ class MainModel extends ChangeNotifier {
   int startTimeStamp;
   int goalTimeStamp;
 
+  int limitCounter = 0;
+  double percentage = 0.7;
+
   void startLoading() {
     this.isLoading = true;
     notifyListeners();
@@ -112,9 +115,15 @@ class MainModel extends ChangeNotifier {
   void getCounter() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     // this.counter = prefs.getInt('counter') ?? counter;
+    startTimeStamp = prefs.getInt('startTimeStamp');
+    this.startDate = DateTime.fromMillisecondsSinceEpoch(startTimeStamp);
     goalTimeStamp = prefs.getInt('goalTimeStamp');
     this.goalDate = DateTime.fromMillisecondsSinceEpoch(goalTimeStamp);
-    this.counter = (goalDate.difference(today).inDays + 1);
+    this.counter = (goalDate.difference(startDate).inDays + 1);
+    this.limitCounter = (goalDate.difference(today).inDays + 1);
+    this.percentage = limitCounter / counter;
+    prefs.setDouble('percentage', percentage);
+    await prefs.setInt('counter', counter);
     this.theirGroupValue = prefs.getInt('limit') ?? theirGroupValue;
     notifyListeners();
   }
@@ -181,6 +190,13 @@ class MainModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void decrementWasher() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (washerStock > 0) washerStock = (prefs.getInt('washer') ?? 0) - 1;
+    await prefs.setInt('washer', washerStock);
+    notifyListeners();
+  }
+
   void resetNotification(DateTime goalDate, int pushHour, int pushMin) async {
     await flutterLocalNotificationsPlugin.cancelAll();
     scheduleGoalDateNotification(goalDate, pushHour, pushMin);
@@ -216,7 +232,6 @@ class MainModel extends ChangeNotifier {
 
   tz.TZDateTime _nextInstanceOfGoalDate(DateTime pushDate) {
     // final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     // year, month, day, hour, minutes, second
     //TODO 指定した日時に設定する
     // tz.TZDateTime scheduledDate =
