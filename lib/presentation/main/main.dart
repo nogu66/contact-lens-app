@@ -1,6 +1,8 @@
 import 'dart:io';
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:contact_lens_app/presentation/gage/circle_painter.dart';
 import 'package:contact_lens_app/presentation/settings/settings_page.dart';
+import 'package:contact_lens_app/services/admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -8,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'main_model.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Admob.initialize();
   runApp(MyApp());
 }
 
@@ -184,18 +188,20 @@ class TopPage extends StatelessWidget {
                 );
               },
             ),
-          ),
-          Consumer<MainModel>(
-            builder: (context, model, child) {
-              return model.isLoading
-                  ? Container(
-                      color: Colors.black.withOpacity(0.3),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : SizedBox();
-            },
+            bottomNavigationBar: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AdmobBanner(
+                  adUnitId: AdMobService().getBannerAdUnitId(),
+                  adSize: AdmobBannerSize(
+                    width: MediaQuery.of(context).size.width.toInt(),
+                    height: AdMobService().getHeight(context).toInt(),
+                    name: 'SMART_BANNER',
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
