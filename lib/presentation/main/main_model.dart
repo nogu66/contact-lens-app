@@ -119,7 +119,7 @@ class MainModel extends ChangeNotifier {
     this.startDate = DateTime.fromMillisecondsSinceEpoch(startTimeStamp);
     goalTimeStamp = prefs.getInt('goalTimeStamp');
     this.goalDate = DateTime.fromMillisecondsSinceEpoch(goalTimeStamp);
-    this.counter = (goalDate.difference(startDate).inDays + 1);
+    this.counter = prefs.getInt('counter');
     this.limitCounter = (goalDate.difference(today).inDays + 1);
     this.percentage = limitCounter / counter;
     prefs.setDouble('percentage', percentage);
