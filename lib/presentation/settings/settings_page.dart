@@ -398,7 +398,7 @@ class SettingsPage extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          model.incrementStock();
+                                          model.incrementStock(1);
                                         },
                                         child: Container(
                                           width: 40,
@@ -413,6 +413,62 @@ class SettingsPage extends StatelessWidget {
                                           child: Icon(
                                             Icons.add,
                                             color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  ButtonBar(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          model.incrementStock(5);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          height: 30,
+                                          decoration: ShapeDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8.0),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '＋5',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          model.incrementStock(10);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          height: 30,
+                                          decoration: ShapeDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8.0),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '＋10',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -528,7 +584,7 @@ class SettingsPage extends StatelessWidget {
                                       ),
                                       InkWell(
                                         onTap: () {
-                                          model.incrementWasher();
+                                          model.incrementWasher(1);
                                         },
                                         child: Container(
                                           width: 40,
@@ -543,6 +599,62 @@ class SettingsPage extends StatelessWidget {
                                           child: Icon(
                                             Icons.add,
                                             color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  ButtonBar(
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          model.incrementWasher(5);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          height: 30,
+                                          decoration: ShapeDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8.0),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '＋5',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          model.incrementWasher(10);
+                                        },
+                                        child: Container(
+                                          width: 70,
+                                          height: 30,
+                                          decoration: ShapeDecoration(
+                                            color: Colors.lightBlue,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8.0),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              '＋10',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),

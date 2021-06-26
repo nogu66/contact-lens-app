@@ -225,9 +225,9 @@ class SettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void incrementStock() async {
+  void incrementStock(int num) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    lensStock = (prefs.getInt('stock') ?? 0) + 1;
+    lensStock = (prefs.getInt('stock') ?? 0) + num;
     await prefs.setInt('stock', lensStock);
     notifyListeners();
   }
@@ -252,9 +252,16 @@ class SettingsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void incrementWasher() async {
+  void incrementWasher(int num) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    washerStock = (prefs.getInt('washer') ?? 0) + 1;
+    washerStock = (prefs.getInt('washer') ?? 0) + num;
+    await prefs.setInt('washer', washerStock);
+    notifyListeners();
+  }
+
+  void incrementNumberWasher(int num) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    washerStock = (prefs.getInt('washer') ?? 0) + num;
     await prefs.setInt('washer', washerStock);
     notifyListeners();
   }
