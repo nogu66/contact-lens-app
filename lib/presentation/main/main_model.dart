@@ -35,7 +35,7 @@ class MainModel extends ChangeNotifier {
   int startTimeStamp;
   int goalTimeStamp;
 
-  int limitCounter = 0;
+  int todayCounter = 0;
   double percentage = 0.7;
 
   void startLoading() {
@@ -123,8 +123,8 @@ class MainModel extends ChangeNotifier {
     this.goalDate = DateTime(goalDate.year, goalDate.month, goalDate.day);
     this.today = DateTime(today.year, today.month, today.day);
     this.counter = prefs.getInt('counter');
-    this.limitCounter = goalDate.difference(today).inDays + 1;
-    this.percentage = limitCounter / counter;
+    this.todayCounter = goalDate.difference(today).inDays + 1;
+    this.percentage = todayCounter / counter;
     prefs.setDouble('percentage', percentage);
     await prefs.setInt('counter', counter);
     this.theirGroupValue = prefs.getInt('limit') ?? theirGroupValue;
