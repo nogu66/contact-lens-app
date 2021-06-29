@@ -135,7 +135,7 @@ class TopPage extends StatelessWidget {
                                                 SizedBox(
                                                   width: 50,
                                                   child: Text(
-                                                    '${model.counter}',
+                                                    '${model.limitCounter}',
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontSize: 30,
