@@ -48,7 +48,7 @@ class SettingsModel extends ChangeNotifier {
 
   String pushTimeText = '18:00';
   String notificationBody;
-  DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+  DateFormat outputFormatYMD = DateFormat('MM月dd日');
 
   void pressedButton() {
     isPressed = !isPressed;
@@ -57,7 +57,7 @@ class SettingsModel extends ChangeNotifier {
 
   void initialize() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+    DateFormat outputFormatYMD = DateFormat('MM月dd日');
     this.startDateText = outputFormatYMD.format(startDate);
     this.goalDateText = outputFormatYMD.format(goalDate);
     await prefs.setString('startDate', startDateText);
@@ -97,7 +97,7 @@ class SettingsModel extends ChangeNotifier {
 
   void setStartDay(Picker picker, DateTime value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+    DateFormat outputFormatYMD = DateFormat('MM月dd日');
     this.startDate = value;
     this.goalDate = startDate.add(new Duration(days: (counter - 1)));
     startDateText = outputFormatYMD.format(startDate);
@@ -141,7 +141,7 @@ class SettingsModel extends ChangeNotifier {
 
   void setLimitCounter(counter) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+    DateFormat outputFormatYMD = DateFormat('MM月dd日');
     await prefs.setInt('counter', counter);
     this.goalDate = startDate.add(new Duration(days: (counter - 1)));
     this.goalDateText = outputFormatYMD.format(goalDate);
@@ -320,7 +320,6 @@ class SettingsModel extends ChangeNotifier {
 
   void setPushDate(counterValue) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
     counter = counterValue;
     await prefs.setInt('counter', counter);
     this.goalDate = startDate.add(new Duration(days: counter));
