@@ -16,11 +16,11 @@ class MainModel extends ChangeNotifier {
   String startYear;
   String startMonth;
   String startDay;
-  DateTime startDate;
+  DateTime startDate = DateTime.now();
   DateTime goalDate;
   String startDateText;
   String goalDateText;
-  DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
+  DateFormat outputFormatYMD = DateFormat('MM月dd日');
   bool isLoading = false;
 
   int theirGroupValue = 0;
@@ -35,36 +35,10 @@ class MainModel extends ChangeNotifier {
   int startTimeStamp;
   int goalTimeStamp;
 
-  int todayCounter = 0;
+  int todayCounter = 14;
   double percentage = 0.7;
 
-  void startLoading() {
-    this.isLoading = true;
-    notifyListeners();
-  }
-
-  void endLoading() {
-    this.isLoading = false;
-    notifyListeners();
-  }
-
-  void getNotifications() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    this.pushOn = prefs.getBool('pushOn') ?? pushOn;
-    this.pushDateValue = prefs.getInt('pushDate') ?? pushDateValue;
-    this.pushHour = prefs.getInt('pushHour') ?? pushHour;
-    this.pushMin = prefs.getInt('pushMin') ?? pushMin;
-  }
-
-  void getStartDate() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (startDateText == null) initializeDate();
-    this.startDateText = prefs.getString('startDate');
-    this.goalDateText = prefs.getString('goalDate');
-    notifyListeners();
-  }
-
-  void initializeDate() async {
+  void initialize() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
     startDate = today;
@@ -74,15 +48,14 @@ class MainModel extends ChangeNotifier {
     await prefs.setInt('startTimeStamp', startTimeStamp);
     await prefs.setInt('goalTimeStamp', goalTimeStamp);
 
-    // print(goalDate);
     this.startDateText = outputFormatYMD.format(startDate);
     this.goalDateText = outputFormatYMD.format(goalDate);
-/*    print(goalDateText);*/
+
     await prefs.setString('startDate', startDateText);
     await prefs.setString('goalDate', goalDateText);
     // this.startDateText = prefs.getString('startDate') ?? startDateText;
     // this.goalDateText = prefs.getString('goalDate') ?? goalDateText;
-    counter = goalDate.difference(startDate).inDays;
+    counter = goalDate.difference(startDate).inDays + 1;
     await prefs.setInt('counter', counter);
     this.counter = prefs.getInt('counter') ?? 13;
 
@@ -108,6 +81,22 @@ class MainModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void getNotifications() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.pushOn = prefs.getBool('pushOn') ?? pushOn;
+    this.pushDateValue = prefs.getInt('pushDate') ?? pushDateValue;
+    this.pushHour = prefs.getInt('pushHour') ?? pushHour;
+    this.pushMin = prefs.getInt('pushMin') ?? pushMin;
+  }
+
+  void getStartDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (startDateText == null) initialize();
+    this.startDateText = prefs.getString('startDate');
+    this.goalDateText = prefs.getString('goalDate');
+    notifyListeners();
+  }
+
   void reload() async {
     notifyListeners();
   }
@@ -122,9 +111,9 @@ class MainModel extends ChangeNotifier {
     this.goalDate = DateTime.fromMillisecondsSinceEpoch(goalTimeStamp);
     this.goalDate = DateTime(goalDate.year, goalDate.month, goalDate.day);
     this.today = DateTime(today.year, today.month, today.day);
-    this.counter = prefs.getInt('counter');
+    this.counter = prefs.getInt('counter') ?? 14;
     this.todayCounter = goalDate.difference(today).inDays + 1;
-    this.percentage = todayCounter / counter;
+    this.percentage = (todayCounter / counter);
     prefs.setDouble('percentage', percentage);
     await prefs.setInt('counter', counter);
     this.theirGroupValue = prefs.getInt('limit') ?? theirGroupValue;
