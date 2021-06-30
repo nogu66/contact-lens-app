@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:intl/intl.dart';
@@ -35,14 +36,47 @@ class MainModel extends ChangeNotifier {
   int startTimeStamp;
   int goalTimeStamp;
 
+<<<<<<< HEAD
   int todayCounter = 14;
   double percentage = 0.7;
 
+=======
+  int todayCounter = 0;
+  double percentage = 0.7;
+
+  void startLoading() {
+    this.isLoading = true;
+    notifyListeners();
+  }
+
+  void endLoading() {
+    this.isLoading = false;
+    notifyListeners();
+  }
+
+  void getNotifications() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    this.pushOn = prefs.getBool('pushOn') ?? pushOn;
+    this.pushDateValue = prefs.getInt('pushDate') ?? pushDateValue;
+    this.pushHour = prefs.getInt('pushHour') ?? pushHour;
+    this.pushMin = prefs.getInt('pushMin') ?? pushMin;
+  }
+
+  void getStartDate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (startDateText == null) initialize();
+    this.startDateText = prefs.getString('startDate');
+    this.goalDateText = prefs.getString('goalDate');
+    notifyListeners();
+  }
+
+>>>>>>> master
   void initialize() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
     startDate = today;
+    startDate = DateTime(startDate.year, startDate.month, startDate.day);
     goalDate = startDate.add(Duration(days: 13));
+    goalDate = DateTime(goalDate.year, goalDate.month, goalDate.day);
     startTimeStamp = startDate.millisecondsSinceEpoch;
     goalTimeStamp = goalDate.millisecondsSinceEpoch;
     await prefs.setInt('startTimeStamp', startTimeStamp);
@@ -110,10 +144,17 @@ class MainModel extends ChangeNotifier {
     goalTimeStamp = prefs.getInt('goalTimeStamp');
     this.goalDate = DateTime.fromMillisecondsSinceEpoch(goalTimeStamp);
     this.goalDate = DateTime(goalDate.year, goalDate.month, goalDate.day);
+<<<<<<< HEAD
     this.today = DateTime(today.year, today.month, today.day);
     this.counter = prefs.getInt('counter') ?? 14;
     this.todayCounter = goalDate.difference(today).inDays + 1;
     this.percentage = (todayCounter / counter);
+=======
+    this.counter = prefs.getInt('counter');
+    today = DateTime(today.year, today.month, today.day);
+    this.todayCounter = (goalDate.difference(today).inDays + 1);
+    this.percentage = todayCounter / counter;
+>>>>>>> master
     prefs.setDouble('percentage', percentage);
     await prefs.setInt('counter', counter);
     this.theirGroupValue = prefs.getInt('limit') ?? theirGroupValue;
@@ -143,7 +184,6 @@ class MainModel extends ChangeNotifier {
 
   void setLimitCounter(counterValue) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateFormat outputFormatYMD = DateFormat('y年MM月dd日');
     this.counter = counterValue;
     await prefs.setInt('counter', counter);
     this.startDate = today;

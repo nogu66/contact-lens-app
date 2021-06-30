@@ -39,7 +39,7 @@ class TopPage extends StatelessWidget {
     }
 
     return ChangeNotifierProvider<MainModel>(
-      create: (_) => MainModel()..initializeDate(),
+      create: (_) => MainModel()..initialize(),
       // ..startLoading(),
       child: Stack(
         children: [
@@ -120,28 +120,29 @@ class TopPage extends StatelessWidget {
                                           children: [
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.all(12.0),
-                                              child: Text(
-                                                  '${model.startDateText}~${model.goalDateText}'),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text('残り'),
-                                                SizedBox(
-                                                  width: 50,
-                                                  child: Text(
-                                                    '${model.limitCounter}',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 30,
+                                                  const EdgeInsets.all(8.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text('残り'),
+                                                  SizedBox(
+                                                    width: 70,
+                                                    child: Text(
+                                                      '${model.todayCounter}',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 50,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Text('日'),
-                                              ],
+                                                  Text('日'),
+                                                ],
+                                              ),
                                             ),
+                                            Text(
+                                                '${model.startDateText}~${model.goalDateText}'),
                                           ],
                                         ),
                                       ),
