@@ -1,8 +1,6 @@
 import 'dart:io';
-import 'package:admob_flutter/admob_flutter.dart';
 import 'package:contact_lens_app/presentation/main/circle_painter.dart';
 import 'package:contact_lens_app/presentation/settings/settings_page.dart';
-import 'package:contact_lens_app/services/admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,7 +9,6 @@ import 'main_model.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Admob.initialize();
   runApp(MyApp());
 }
 
