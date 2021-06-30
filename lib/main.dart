@@ -123,7 +123,7 @@ class TopPage extends StatelessWidget {
                                                       textAlign:
                                                           TextAlign.center,
                                                       style: TextStyle(
-                                                        fontSize: 70,
+                                                        fontSize: 75,
                                                         // color: Colors.white,
                                                       ),
                                                     ),
